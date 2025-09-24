@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Login - Lorena Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/4a3b1f73a2.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Roboto', sans-serif; background: linear-gradient(135deg, #e75480 0%, #ffb347 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .login-container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        .logo { text-align: center; margin-bottom: 30px; }
+        .logo i { font-size: 3em; color: #e75480; margin-bottom: 10px; }
+        .logo h1 { color: #333; font-weight: 300; font-size: 2em; }
+        .form-group { margin-bottom: 20px; position: relative; }
+        .form-group input { width: 100%; padding: 15px 20px 15px 50px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; transition: all 0.3s; }
+        .form-group input:focus { outline: none; border-color: #e75480; }
+        .form-group i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #999; }
+        .btn { width: 100%; padding: 15px; background: #e75480; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 500; cursor: pointer; transition: all 0.3s; }
+        .btn:hover { background: #d63384; transform: translateY(-2px); }
+        .error { color: #dc3545; text-align: center; margin: 10px 0; font-size: 14px; }
+        .success { color: #28a745; text-align: center; margin: 10px 0; font-size: 14px; }
+        .switch { text-align: center; margin-top: 20px; }
+        .switch a { color: #e75480; text-decoration: none; font-weight: 500; }
+        .switch a:hover { text-decoration: underline; }
+        .back-home { position: absolute; top: 20px; left: 20px; color: white; font-size: 24px; text-decoration: none; }
+        .back-home:hover { color: #f0f0f0; }
+        
+        @media (max-width: 768px) {
+            .login-container { margin: 20px; padding: 30px 25px; max-width: 90%; }
+            .logo h1 { font-size: 1.8em; }
+            .logo i { font-size: 2.5em; }
+            .back-home { position: relative; top: auto; left: auto; display: block; text-align: center; margin-bottom: 20px; }
+        }
+        
+        @media (max-width: 480px) {
+            .login-container { padding: 25px 20px; }
+            .logo h1 { font-size: 1.5em; }
+            .form-group input { padding: 12px 15px 12px 45px; font-size: 14px; }
+            .btn { padding: 12px; font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-home" title="Back to Home"><i class="fas fa-arrow-left"></i></a>
+    
+    <div class="login-container">
+        <div class="logo">
+            <i class="fas fa-gem"></i>
+            <h1>Lorena Store</h1>
+            <p style="color: #666; margin-top: 10px;">Welcome back!</p>
+        </div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="identifier" placeholder="Email or Phone Number" required>
+            </div>
+            
+            <div class="form-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" placeholder="Password" required>
+            </div>
+            
+            <div id="message" class="error" style="display: none;"></div>
+            
+            <button type="submit" class="btn">
+                <span id="btnText">Sign In</span>
+                <i id="btnLoader" class="fas fa-spinner fa-spin" style="display: none;"></i>
+            </button>
+        </form>
+        
+        <div class="switch">
+            Don't have an account? <a href="register.html">Sign Up</a>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    
+    <script>
+        function waitForFirebase() {
+            if (window.firebaseServices && window.firebaseServices.auth) {
+                initializeLogin();
+            } else {
+                setTimeout(waitForFirebase, 100);
+            }
+        }
+        
+        function initializeLogin() {
+            const { auth, googleProvider, db } = window.firebaseServices;
+            
+            // Check if user is already logged in
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    window.location.href = 'profile.html';
+                }
+            });
+            
+            // Add Google Sign In button
+            const googleBtn = document.createElement('button');
+            googleBtn.type = 'button';
+            googleBtn.className = 'btn';
+            googleBtn.style.background = '#db4437';
+            googleBtn.style.marginBottom = '15px';
+            googleBtn.innerHTML = '<i class="fab fa-google"></i> Continue with Google';
+            googleBtn.addEventListener('click', async () => {
+                const btnText = googleBtn.innerHTML;
+                googleBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+                googleBtn.disabled = true;
+                
+                try {
+                    const result = await auth.signInWithPopup(googleProvider);
+                    const user = result.user;
+                    
+                    // Save to Firestore immediately
+                    await window.firebaseServices.db.collection('users').doc(user.uid).set({
+                        name: user.displayName,
+                        email: user.email,
+                        photoURL: user.photoURL,
+                        provider: 'google',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                        phone: ''
+                    }, { merge: true });
+                    
+                    showMessage('Login successful! Redirecting...', 'success');
+                    setTimeout(() => window.location.href = 'profile.html', 500);
+                } catch (error) {
+                    showMessage(error.message, 'error');
+                    googleBtn.innerHTML = btnText;
+                    googleBtn.disabled = false;
+                }
+            });
+            
+            // Insert Google button before the form
+            const form = document.getElementById('loginForm');
+            form.parentNode.insertBefore(googleBtn, form);
+            
+            // Add divider
+            const divider = document.createElement('div');
+            divider.style.cssText = 'text-align: center; margin: 20px 0; color: #999; position: relative;';
+            divider.innerHTML = '<span style="background: white; padding: 0 15px;">or</span>';
+            const dividerLine = document.createElement('div');
+            dividerLine.style.cssText = 'position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #eee; z-index: -1;';
+            divider.appendChild(dividerLine);
+            form.parentNode.insertBefore(divider, form);
+            
+            document.getElementById('loginForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const identifier = document.getElementById('identifier').value.trim();
+                const password = document.getElementById('password').value;
+                const btnText = document.getElementById('btnText');
+                const btnLoader = document.getElementById('btnLoader');
+                
+                if (!identifier || !password) {
+                    showMessage('Please fill in all fields', 'error');
+                    return;
+                }
+                
+                // Show loading
+                btnText.style.display = 'none';
+                btnLoader.style.display = 'inline';
+                
+                try {
+                    // Check if identifier is email
+                    if (identifier.includes('@')) {
+                        await auth.signInWithEmailAndPassword(identifier, password);
+                    } else {
+                        throw new Error('Please use email address to sign in');
+                    }
+                    
+                    showMessage('Login successful! Redirecting...', 'success');
+                    
+                    // Update last login in Firestore
+                    const user = auth.currentUser;
+                    if (user) {
+                        db.collection('users').doc(user.uid).update({
+                            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                        }).catch(() => {});
+                    }
+                    
+                    setTimeout(() => window.location.href = 'profile.html', 500);
+                } catch (error) {
+                    showMessage(error.message, 'error');
+                } finally {
+                    btnText.style.display = 'inline';
+                    btnLoader.style.display = 'none';
+                }
+            });
+        }
+        
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = type;
+            messageEl.style.display = 'block';
+            setTimeout(() => messageEl.style.display = 'none', 5000);
+        }
+        
+        // Start initialization
+        document.addEventListener('DOMContentLoaded', waitForFirebase);
+    </script>
+</body>
+</html>

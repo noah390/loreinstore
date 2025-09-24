@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Lorena Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/4a3b1f73a2.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Roboto', sans-serif; background: linear-gradient(135deg, #e75480 0%, #ffb347 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .register-container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        .logo { text-align: center; margin-bottom: 30px; }
+        .logo i { font-size: 3em; color: #e75480; margin-bottom: 10px; }
+        .logo h1 { color: #333; font-weight: 300; font-size: 2em; }
+        .form-group { margin-bottom: 20px; position: relative; }
+        .form-group input { width: 100%; padding: 15px 20px 15px 50px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; transition: all 0.3s; }
+        .form-group input:focus { outline: none; border-color: #e75480; }
+        .form-group i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #999; }
+        .btn { width: 100%; padding: 15px; background: #e75480; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 500; cursor: pointer; transition: all 0.3s; margin-bottom: 15px; }
+        .btn:hover { background: #d63384; transform: translateY(-2px); }
+        .btn-google { background: #db4437; }
+        .btn-google:hover { background: #c23321; }
+        .btn-phone { background: #25d366; }
+        .btn-phone:hover { background: #128c7e; }
+        .divider { text-align: center; margin: 20px 0; color: #999; position: relative; }
+        .divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #eee; }
+        .divider span { background: white; padding: 0 15px; }
+        .error { color: #dc3545; text-align: center; margin: 10px 0; font-size: 14px; }
+        .success { color: #28a745; text-align: center; margin: 10px 0; font-size: 14px; }
+        .switch { text-align: center; margin-top: 20px; }
+        .switch a { color: #e75480; text-decoration: none; font-weight: 500; }
+        .switch a:hover { text-decoration: underline; }
+        .back-home { position: absolute; top: 20px; left: 20px; color: white; font-size: 24px; text-decoration: none; }
+        .back-home:hover { color: #f0f0f0; }
+        .phone-step { display: none; }
+        .verification-input { text-align: center; font-size: 18px; letter-spacing: 5px; }
+        
+        @media (max-width: 768px) {
+            .register-container { margin: 20px; padding: 30px 25px; max-width: 90%; }
+            .logo h1 { font-size: 1.8em; }
+            .logo i { font-size: 2.5em; }
+            .back-home { position: relative; top: auto; left: auto; display: block; text-align: center; margin-bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-home" title="Back to Home"><i class="fas fa-arrow-left"></i></a>
+    
+    <div class="register-container">
+        <div class="logo">
+            <i class="fas fa-gem"></i>
+            <h1>Lorena Store</h1>
+            <p style="color: #666; margin-top: 10px;">Create your account</p>
+        </div>
+        
+        <!-- Email Registration Form -->
+        <div id="emailStep">
+            <button type="button" id="googleSignUp" class="btn btn-google">
+                <i class="fab fa-google"></i> Continue with Google
+            </button>
+            
+
+            
+            <div class="divider">
+                <span>or</span>
+            </div>
+            
+            <form id="emailForm">
+                <div class="form-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="fullName" placeholder="Full Name" required>
+                </div>
+                
+                <div class="form-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="Email Address" required>
+                </div>
+                
+                <div class="form-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Password (min 6 characters)" required minlength="6">
+                </div>
+                
+                <div id="message" class="error" style="display: none;"></div>
+                
+                <button type="submit" class="btn">
+                    <span id="btnText">Create Account</span>
+                    <i id="btnLoader" class="fas fa-spinner fa-spin" style="display: none;"></i>
+                </button>
+            </form>
+        </div>
+        
+
+        
+        <div class="switch">
+            Already have an account? <a href="login.html">Sign In</a>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    
+    <script>
+        function waitForFirebase() {
+            if (window.firebaseServices && window.firebaseServices.auth) {
+                initializeRegister();
+            } else {
+                setTimeout(waitForFirebase, 100);
+            }
+        }
+        
+        function initializeRegister() {
+            const { auth, googleProvider, db } = window.firebaseServices;
+            
+            // Google Sign Up
+            document.getElementById('googleSignUp').addEventListener('click', async () => {
+                const btn = document.getElementById('googleSignUp');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+                btn.disabled = true;
+                
+                try {
+                    const result = await auth.signInWithPopup(googleProvider);
+                    const user = result.user;
+                    
+                    // Save user profile to Firestore with server timestamp
+                    await db.collection('users').doc(user.uid).set({
+                        name: user.displayName,
+                        email: user.email,
+                        photoURL: user.photoURL,
+                        provider: 'google',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                        phone: ''
+                    }, { merge: true });
+                    
+                    showMessage('Account created successfully!', 'success');
+                    setTimeout(() => window.location.href = 'profile.html', 500);
+                } catch (error) {
+                    showMessage(error.message, 'error');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            });
+            
+            // Email Form
+            document.getElementById('emailForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const name = document.getElementById('fullName').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+                
+                const btnText = document.getElementById('btnText');
+                const btnLoader = document.getElementById('btnLoader');
+                
+                btnText.style.display = 'none';
+                btnLoader.style.display = 'inline';
+                
+                try {
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+                    
+                    await user.updateProfile({ displayName: name });
+                    
+                    // Save user profile to Firestore with server timestamp
+                    await db.collection('users').doc(user.uid).set({
+                        name: name,
+                        email: email,
+                        photoURL: '',
+                        provider: 'email',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                        phone: ''
+                    });
+                    
+                    showMessage('Account created successfully!', 'success');
+                    setTimeout(() => window.location.href = 'profile.html', 1000);
+                } catch (error) {
+                    showMessage(error.message, 'error');
+                } finally {
+                    btnText.style.display = 'inline';
+                    btnLoader.style.display = 'none';
+                }
+            });
+        }
+        
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = type;
+            messageEl.style.display = 'block';
+            setTimeout(() => messageEl.style.display = 'none', 5000);
+        }
+        
+        // Start initialization
+        document.addEventListener('DOMContentLoaded', waitForFirebase);
+    </script>
+</body>
+</html>

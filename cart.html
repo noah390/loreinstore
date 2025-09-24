@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/presidential.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title> Cart | E-COMMERCE WEBSITE BY EDYODA </title>
+    <link rel="stylesheet" href="css/cart.css">
+    <!-- favicon -->
+    <link rel="icon" href="https://yt3.ggpht.com/a/AGF-l78km1YyNXmF0r3-0CycCA0HLA_i6zYn_8NZEg=s900-c-k-c0xffffffff-no-rj-mo" type="image/gif" sizes="16x16">
+    <!-- header links -->
+    <script src="https://kit.fontawesome.com/4a3b1f73a2.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <script src="js/auth.js"></script>
+        <!-- HEADER -->
+    <div id="1"></div>
+
+        <!-- CART CONTAINER -->
+    <div id="cartMainContainer">
+        <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+            <i class="fas fa-shopping-cart" style="font-size: 2em; color: #e75480; margin-right: 15px;"></i>
+            <h1 style="margin: 0; color: #222;"> Shopping Cart </h1>
+        </div>
+        <h3 id="totalItem" style="text-align: center; color: #666;"> Total Items: 0 </h3>
+
+        <div id="cartContainer">
+            <!-- JS rendered code -->
+        </div>
+
+        <!-- Customer Details Form -->
+        <div id="customerForm" style="display: none; background: #f9f9f9; padding: 20px; border-radius: 10px; margin: 20px 0;">
+            <h3 style="color: #e75480; text-align: center;"><i class="fas fa-user"></i> Customer Details</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <input type="text" id="customerName" placeholder="Full Name" required style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <input type="email" id="customerEmail" placeholder="Email Address" required style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <input type="tel" id="customerPhone" placeholder="Phone Number" required style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <input type="text" id="customerCity" placeholder="City" required style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+            </div>
+            <textarea id="customerAddress" placeholder="Delivery Address" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-top: 15px; height: 80px; resize: vertical;"></textarea>
+        </div>
+
+    </div>
+
+</body>
+    <!-- FOOTER -->
+    <div id="4"></div>
+    
+    <script>
+        function loadContent(url, elementId) {
+            const req = new XMLHttpRequest();
+            req.open("GET", url, false);
+            req.send(null);
+            document.getElementById(elementId).innerHTML = req.responseText;
+        }
+        
+        // Load sections
+        loadContent("header.html", 1);
+        loadContent("footer.html", 4);
+    </script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+<script src="js/demo-data.js"></script>
+<script src="js/env-config.js"></script>
+<script src="js/config.js"></script>
+<script src="Backend/cart.js"></script>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/presidential.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/mobile-utils.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Contact Us - Lorena Store</title>
+    <link rel="icon" href="https://yt3.ggpht.com/a/AGF-l78km1YyNXmF0r3-0CycCA0HLA_i6zYn_8NZEg=s900-c-k-c0xffffffff-no-rj-mo" type="image/gif" sizes="16x16">
+    <script src="https://kit.fontawesome.com/4a3b1f73a2.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <script src="js/jQuery3.4.1.js"></script>
+    
+    <style>
+        body { margin-top: 100px; font-family: 'Lato', sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; }
+        .contact-section { padding: 4rem 0; background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,249,250,0.9) 100%); backdrop-filter: blur(10px); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        .contact-content { text-align: center; }
+        .contact-title { font-size: 3rem; color: #e75480; margin-bottom: 2rem; font-family: 'Pacifico', cursive; }
+        .contact-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .contact-card { background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); padding: 2rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; transition: transform 0.3s, box-shadow 0.3s; border: 1px solid rgba(255,255,255,0.2); }
+        .contact-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+        .contact-icon { font-size: 3rem; color: #e75480; margin-bottom: 1rem; }
+        .contact-method { font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem; color: #333; }
+        .contact-details { color: #666; line-height: 1.6; }
+        .contact-details a { color: #e75480; text-decoration: none; font-weight: 500; }
+        .contact-details a:hover { text-decoration: underline; }
+        .admin-access { margin-top: 4rem; text-align: center; }
+        .admin-link { color: #999; font-size: 0.9rem; text-decoration: none; opacity: 0.7; transition: opacity 0.3s; }
+        .admin-link:hover { opacity: 1; color: #e75480; }
+    </style>
+</head>
+
+<body>
+    <script src="js/auth-guard.js"></script>
+    <!-- HEADER -->
+    <div id="1"></div>
+    
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <div class="contact-content">
+                <h1 class="contact-title">Contact Us</h1>
+                <p style="font-size: 1.2rem; color: #666; margin-bottom: 2rem;">
+                    We'd love to hear from you! Get in touch with us through any of the following methods.
+                </p>
+                
+                <div class="contact-info">
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <h3 class="contact-method">WhatsApp</h3>
+                        <div class="contact-details">
+                            <p>Chat with us instantly</p>
+                            <p><a href="https://wa.me/2349050120553">+234 9050120553</a></p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h3 class="contact-method">Email</h3>
+                        <div class="contact-details">
+                            <p>Send us an email</p>
+                            <p><a href="mailto:spanishfrenchexpress@gmail.com">spanishfrenchexpress@gmail.com</a></p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <h3 class="contact-method">Phone</h3>
+                        <div class="contact-details">
+                            <p>Call us directly</p>
+                            <p><a href="tel:+2349050120553">+234 9050120553</a></p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <h3 class="contact-method">Location</h3>
+                        <div class="contact-details">
+                            <p>Visit our store</p>
+                            <p>Ibadan, Nigeria</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="admin-access">
+                    <a href="admin.html" class="admin-link">Store Management</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- FOOTER -->
+    <div id="4"></div>
+
+    <script>
+        function loadContent(url, elementId) {
+            const req = new XMLHttpRequest();
+            req.open("GET", url, false);
+            req.send(null);
+            document.getElementById(elementId).innerHTML = req.responseText;
+        }
+        
+        loadContent("header.html", 1);
+        loadContent("footer.html", 4);
+        
+        function scrollToProducts() {
+            window.location.href = 'index.html#products';
+        }
+        
+        // Handle hash navigation
+        window.addEventListener('load', function() {
+            if (window.location.hash === '#products') {
+                setTimeout(() => scrollToProducts(), 500);
+            }
+        });
+    </script>
+</body>
+</html>

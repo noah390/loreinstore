@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title> HEADER | LORENA</title>
+    <!-- favicon -->
+    <link rel="icon" href="https://yt3.ggpht.com/a/AGF-l78km1YyNXmF0r3-0CycCA0HLA_i6zYn_8NZEg=s900-c-k-c0xffffffff-no-rj-mo" type="image/gif" sizes="16x16">
+    <!-- EXTERNAL LINKS -->
+    <link rel="stylesheet" href="css/header.css">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/4a3b1f73a2.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+</head>
+<body>
+    
+    <header>
+        <section>
+            <!-- MAIN CONTAINER -->
+            <div id="container">
+                <!-- SHOP NAME -->
+                <div id="shopName" style="font-family: 'Pacifico', cursive; font-size: 2.2em; color: #e75480; letter-spacing: 2px; display: flex; align-items: center;">
+                    <a href="index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                        <span style="margin-right: 10px;"><i class="fas fa-gem"></i></span>
+                        Lorena <span style="color:#222; margin-left:5px;">Store</span>
+                    </a>
+                </div>
+                    <!-- COLLECTIONS ON WEBSITE -->
+                    <div id="collection">
+                        <div><a href="index.html">HOME</a></div>
+                        <div><a href="index.html#products">PRODUCTS</a></div>
+                        <div><a href="about.html">ABOUT US</a></div>
+                        <div><a href="contact.html">CONTACT US</a></div>
+                        <div><a href="admin.html" style="color: #666; font-size: 12px;">ADMIN</a></div>
+                    </div>
+                    
+                    <!-- MOBILE MENU TOGGLE -->
+                    <div id="mobileMenuToggle" style="display: none;">
+                        <i class="fas fa-bars" id="menuIcon"></i>
+                    </div>
+                    
+                    <!-- MOBILE MENU -->
+                    <div id="mobileMenu" style="display: none;">
+                        <div class="mobile-menu-item"><a href="index.html">HOME</a></div>
+                        <div class="mobile-menu-item"><a href="index.html#products">PRODUCTS</a></div>
+                        <div class="mobile-menu-item"><a href="about.html">ABOUT US</a></div>
+                        <div class="mobile-menu-item"><a href="contact.html">CONTACT US</a></div>
+                        <div class="mobile-menu-item"><a href="admin.html">ADMIN</a></div>
+                    </div>
+                    <!-- SEARCH SECTION -->
+                    <div id="search">
+                        <i class="fas fa-search search"></i>
+                        <input type="text" id="input" name="searchBox" placeholder="Search for Clothing and Accessories">
+                    </div>
+                    <!-- USER SECTION (CART AND USER ICON) -->
+                    <div id="user">
+                        <a href="https://wa.me/2349050120553" title="WhatsApp" target="_blank"> <i class="fab fa-whatsapp" style="font-size: 1.8em; color: #25d366; margin-right: 15px;"></i></a>
+                        <a href="tel:+2349050120553" title="Call Us"> <i class="fas fa-phone" style="font-size: 1.5em; color: #e75480; margin-right: 15px;"></i></a>
+                        <a href="mailto:spanishfrenchexpress@gmail.com" title="Email Us"> <i class="fas fa-envelope" style="font-size: 1.5em; color: #007bff; margin-right: 15px;"></i></a>
+                        <a href="cart.html" title="Shopping Cart"> <i class="fas fa-shopping-cart addedToCart"><div id="badge"> 0 </div></i></a>
+                        <a href="login.html" title="Login / Register" id="userProfileLink"> <i class="fas fa-user-circle userIcon"></i> </a>
+                    </div>
+                    <script>
+                        // Update cart badge and user link
+                        document.addEventListener('DOMContentLoaded', function() {
+                            // Update cart badge
+                            const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+                            const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
+                            const badge = document.getElementById('badge');
+                            if (badge) badge.textContent = totalItems;
+                            
+                            // Update user profile link based on authentication
+                            const userLink = document.getElementById('userProfileLink');
+                            
+                            // Check Firebase auth state
+                            if (window.firebaseServices && window.firebaseServices.auth) {
+                                window.firebaseServices.auth.onAuthStateChanged((user) => {
+                                    if (user) {
+                                        userLink.href = 'profile.html';
+                                        userLink.title = 'My Profile';
+                                        userLink.style.color = '#e75480';
+                                    } else {
+                                        userLink.href = 'login.html';
+                                        userLink.title = 'Login / Register';
+                                        userLink.style.color = '#666';
+                                    }
+                                });
+                            } else {
+                                // Fallback to localStorage check
+                                const currentUser = localStorage.getItem('currentUser');
+                                if (currentUser) {
+                                    userLink.href = 'profile.html';
+                                    userLink.title = 'My Profile';
+                                    userLink.style.color = '#e75480';
+                                } else {
+                                    userLink.href = 'login.html';
+                                    userLink.title = 'Login / Register';
+                                    userLink.style.color = '#666';
+                                }
+                            }
+                            
+                            // Mobile menu functionality
+                            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+                            const mobileMenu = document.getElementById('mobileMenu');
+                            const menuIcon = document.getElementById('menuIcon');
+                            
+                            if (mobileMenuToggle && mobileMenu) {
+                                mobileMenuToggle.addEventListener('click', function() {
+                                    if (mobileMenu.style.display === 'none' || !mobileMenu.style.display) {
+                                        mobileMenu.style.display = 'block';
+                                        menuIcon.className = 'fas fa-times';
+                                    } else {
+                                        mobileMenu.style.display = 'none';
+                                        menuIcon.className = 'fas fa-bars';
+                                    }
+                                });
+                                
+                                // Close menu when clicking outside
+                                document.addEventListener('click', function(e) {
+                                    if (!mobileMenuToggle.contains(e.target) && !mobileMenu.contains(e.target)) {
+                                        mobileMenu.style.display = 'none';
+                                        menuIcon.className = 'fas fa-bars';
+                                    }
+                                });
+                            }
+                        });
+                    </script>
+            </div>
+
+        </section>
+    </header>
+
+</body>
+</html>
